@@ -1,1 +1,1 @@
-# NewHacks-Project1
+# CanFind-NewHacks2025Project

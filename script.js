@@ -26,10 +26,36 @@ function searchRestaurants(request, service, map, infowindow) {
                     map,
                     title: place.name
                 });
-
+                
                 marker.addListener("click", () => {
-                    infowindow.setContent(`<strong>${place.name}</strong><br>${place.vicinity}`);
-                    infowindow.open(map, marker);
+                    service.getDetails({
+                        placeId: place.place_id,
+                        fields: [
+                            "name",
+                            "formatted_address",
+                            "formatted_phone_number",
+                            "website",
+                            "opening_hours",
+                            "price_level",
+                            "rating"
+                        ]
+                    }, (details, status) => {
+                        if (status === google.maps.places.PlacesServiceStatus.OK) {
+                            const content = `
+                                <strong>${details.name}</strong><br>
+                                ${details.formatted_address || ""}<br>
+                                Phone: ${details.formatted_phone_number || "N/A"}<br>
+                                Website: ${details.website ? `<a href="${details.website}" target="_blank">Link</a>` : "N/A"}<br>
+                                Rating: ${details.rating || "N/A"}<br>
+                                Price: ${details.price_level != null ? "$".repeat(details.price_level) : "N/A"}
+                            `;
+                            infowindow.setContent(content);
+                            infowindow.open(map, marker);
+                        } else {
+                            infowindow.setContent("Details unavailable");
+                            infowindow.open(map, marker);
+                        }
+                    });
                 });
             });
 

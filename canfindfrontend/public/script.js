@@ -1,4 +1,4 @@
-//const allMarkers = [];
+const allMarkers = [];
 let map;
 let service;
 let infowindow;
@@ -8,14 +8,14 @@ function initMap() {
     console.log("initMap loaded!");
     const toronto = { lat: 43.6615, lng: -79.4009 };
 
-    const map = new google.maps.Map(document.getElementById("map"), {
+    map = new google.maps.Map(document.getElementById("map"), {
         center: toronto,
         zoom: 14,
     });
 
-    const service = new google.maps.places.PlacesService(map);
-    const infowindow = new google.maps.InfoWindow();
-    const allMarkers = [];
+    service = new google.maps.places.PlacesService(map);
+    infowindow = new google.maps.InfoWindow();
+    allMarkers = [];
 
 
     searchRestaurants({
@@ -51,10 +51,13 @@ function searchRestaurants(request, service, map, infowindow) {
                             "website",
                             "opening_hours",
                             "price_level",
-                            "rating"
+                            "rating",
+                            "editorial_summary"
                         ]
                     }, (details, status) => {
                         if (status === google.maps.places.PlacesServiceStatus.OK) {
+                            const summary = details.editorial_summary?.overview || "N/A";
+
                             const content = `
                                 <strong>${details.name}</strong><br>
                                 ${details.formatted_address || ""}<br>
@@ -62,6 +65,8 @@ function searchRestaurants(request, service, map, infowindow) {
                                 Website: ${details.website ? `<a href="${details.website}" target="_blank">Link</a>` : "N/A"}<br>
                                 Rating: ${details.rating || "N/A"}<br>
                                 Price: ${details.price_level != null ? "$".repeat(details.price_level) : "N/A"}
+                                Summary: ${summary}
+
                             `;
                             infowindow.setContent(content);
                             infowindow.open(map, marker);
@@ -90,12 +95,10 @@ function updateMarkers(filterFn) {
     let shown = 0;
     allMarkers.forEach(marker => {
         if (filterFn(marker)) {
-        marker.setMap(map);
-        marker.visible = true;
-        shown++;
+            marker.setMap(map);
+            shown++;
         } else {
-        marker.setMap(null);
-        marker.visible = false;
+            marker.setMap(null);
         }
     });
     console.log("updateMarkers -> shown:", shown, "of", allMarkers.length);
@@ -110,10 +113,18 @@ function showCanadian() {
     updateMarkers(marker => marker.name.includes("canadian") || marker.types.includes("canadian_restaurant") );
 }
 
-function showAll() {
-    updateMarkers(marker => true );
+function showChinese() {
+    updateMarkers(marker => marker.name.includes("chinese") || marker.types.includes("chinese_restaurant") );
 }
 
-function resetMarkers() {
+function showItalian(){
+    updateMarkers(marker => marker.name.includes("italian") || marker.types.includes("italian_restaurant") );
+}
 
+function showIndian(){
+    updateMarkers(marker => marker.name.includes("indian") || marker.types.includes("indian_restaurant") ); 
+}
+
+function showAll() {
+    updateMarkers(marker => true );
 }

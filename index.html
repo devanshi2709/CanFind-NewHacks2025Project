@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Explore Canada</title>
+        <link rel="stylesheet" href="style.css">
+
+    </head>
+    <body>
+        <h1>Explore Canada</h1>
+        <div id="map"></div>
+
+        <script src="script.js"></script>
+
+        <script async
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA81uxRaknk0hRxBxflcXjLjsSoM6Mz1F4&libraries=places&callback=initMap">
+        </script>
+
+        <style>
+        #map {
+            height: 75vh;
+            width: 100%;
+        }
+        button {
+            margin: 10px;
+            padding: 8px 16px;
+            font-size: 14px;
+            border-radius: 8px;
+        }
+        </style>
+        </head>
+        <body>
+            <div>
+
+                <button onclick="showCheap()">Show Affordable Restaurants</button>
+                <button onclick="showCanadian()">Show All Canadian Restaurants</button>
+                <div id="map"></div>
+            </div>
+        </body>
+
+        </script>
+    </body>
+</html>

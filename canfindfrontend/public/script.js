@@ -1,4 +1,4 @@
-const allMarkers = [];
+//const allMarkers = [];
 let map;
 let service;
 let infowindow;

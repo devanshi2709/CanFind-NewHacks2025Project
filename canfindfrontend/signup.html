@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sign Up – CanFind</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{ --red:#d32f2f; --red-dark:#b71c1c; }
+    body{
+      margin:0; min-height:100vh; display:grid; place-items:center;
+      font-family:"Source Sans 3",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.55)),
+        url("/images/Best-places-to-see-ontario-fall-colours-near-me.png") center/cover no-repeat fixed;
+    }
+    .card{width:min(92vw,440px); background:#fff; border-radius:18px; box-shadow:0 12px 32px rgba(0,0,0,.35); padding:28px 24px;}
+    h1{margin:0 0 6px; color:var(--red-dark)}
+    p.hint{margin:0 0 18px; color:#555}
+    label{display:block; font-weight:700; margin:12px 0 6px}
+    input{width:100%; padding:11px 12px; border:1px solid #dadada; border-radius:10px; font-size:15px}
+    .error{display:none; margin:10px 0; padding:10px; background:#fdecea; color:#b71c1c; border:1px solid #f5c2c0; border-radius:10px; font-size:.95rem}
+    button{width:100%; margin-top:14px; padding:12px; border:0; border-radius:10px; background:var(--red); color:#fff; font-weight:800; cursor:pointer; font-size:15px}
+    button:hover{background:var(--red-dark)}
+    .links{display:flex; justify-content:space-between; gap:8px; margin-top:12px}
+    .links a{font-weight:700; color:var(--red-dark); text-decoration:none}
+    .links a:hover{text-decoration:underline}
+  </style>
+</head>
+<body>
+  <main class="card" role="main">
+    <h1>Create account</h1>
+    <p class="hint">Pick any username. Password must be <code>canada123</code> (demo).</p>
+    <form id="signup-form" novalidate>
+      <label for="su-user">Username</label>
+      <input id="su-user" name="user" type="text" placeholder="Your name here" required />
+
+      <label for="su-email">Email</label>
+      <input id="su-email" name="email" type="email" placeholder="you@example.com" required />
+
+      <label for="su-pass">Password</label>
+      <input id="su-pass" name="pass" type="password" placeholder="••••••••" required />
+
+      <div id="su-err" class="error">Password must be <strong>canada123</strong> for this demo.</div>
+      <button type="submit">Create account</button>
+      <div class="links">
+        <a href="login.html">Already have an account?</a>
+        <a href="index.html">Back to Home</a>
+      </div>
+    </form>
+  </main>
+
+  <script>
+    const form = document.getElementById('signup-form');
+    const err  = document.getElementById('su-err');
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const user = document.getElementById('su-user').value.trim();
+      const pass = document.getElementById('su-pass').value;
+      if (pass !== 'canada123') {
+        err.style.display = 'block';
+        return;
+      }
+      // Save and redirect
+      localStorage.setItem('cf_username', user || 'Guest');
+      window.location.href = 'dashboard.html';
+    });
+  </script>
+</body>
+</html>

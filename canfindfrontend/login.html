@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Login – CanFind</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{ --red:#d32f2f; --red-dark:#b71c1c; }
+    *{ box-sizing:border-box }
+    body{
+      margin:0;
+      font-family:"Source Sans 3", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      color:#111;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.55)),
+        url("/images/Best-places-to-see-ontario-fall-colours-near-me.png") center/cover no-repeat fixed;
+    }
+    .card{
+      width:min(92vw,420px);
+      background:#fff;
+      border-radius:18px;
+      box-shadow:0 12px 32px rgba(0,0,0,.35);
+      padding:28px 24px;
+    }
+    h1{margin:0 0 6px; color:var(--red-dark)}
+    p.hint{margin:0 0 18px; color:#555}
+    label{display:block; font-weight:700; margin:12px 0 6px}
+    input{
+      width:100%; padding:11px 12px; border:1px solid #dadada; border-radius:10px;
+      font-size:15px;
+    }
+    .error{display:none; margin:10px 0; padding:10px; background:#fdecea; color:#b71c1c; border:1px solid #f5c2c0; border-radius:10px; font-size:.95rem}
+    button{
+      width:100%; margin-top:14px; padding:12px; border:0; border-radius:10px;
+      background:var(--red); color:#fff; font-weight:800; cursor:pointer; font-size:15px;
+    }
+    button:hover{ background:var(--red-dark) }
+    .links{display:flex; justify-content:space-between; gap:8px; margin-top:12px}
+    .links a{font-weight:700; color:var(--red-dark); text-decoration:none}
+    .links a:hover{text-decoration:underline}
+  </style>
+</head>
+<body>
+  <main class="card" role="main">
+    <h1>Sign in</h1>
+    <p class="hint">Use any <strong>username</strong> and the password <code>canada123</code>.</p>
+    <form id="login-form" novalidate>
+      <label for="user">Username</label>
+      <input id="user" name="user" type="text" placeholder="Your name here" required />
+      <label for="pass">Password</label>
+      <input id="pass" name="pass" type="password" placeholder="••••••••" required />
+      <div id="err" class="error">Incorrect password. Hint: it’s <strong>canada123</strong>.</div>
+      <button type="submit">Sign in</button>
+      <div class="links">
+        <a href="index.html">← Back</a>
+        <a href="signup.html">Create account</a>
+      </div>
+    </form>
+  </main>
+
+  <script>
+    const form = document.getElementById('login-form');
+    const err  = document.getElementById('err');
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const user = document.getElementById('user').value.trim();
+      const pass = document.getElementById('pass').value;
+      if (pass !== 'canada123') {
+        err.style.display = 'block';
+        return;
+      }
+      // Save username and redirect to dashboard
+      localStorage.setItem('cf_username', user || 'Guest');
+      window.location.href = 'dashboard.html';
+    });
+  </script>
+</body>
+</html>

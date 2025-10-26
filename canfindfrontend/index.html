@@ -5,75 +5,373 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Explore Canada - CanFind</title>
-    <link rel="stylesheet" href="App.css" />
-    
+
+    <!-- Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 
     <style>
-        #map {
-            height: 75vh;
-            width: 100%;
-        }
-        button {
-            margin: 10px;
-            padding: 8px 16px;
-            font-size: 14px;
-            border-radius: 8px;
-        }
-    </style>
-</head>
-<body>
-    <h1>Spots for Food!</h1>
+      /* ---------- THEME ---------- */
+      :root{
+        --red:#d32f2f;         /* Canada red */
+        --red-dark:#b71c1c;
+        --gold:#f5a524;        /* fall accent */
+        --ink:#101215;
+        --text:#1f2328;
+        --muted:#667085;
+        --bg:#fffdfb;
+        --surface:#ffffff;
+        --overlay:rgba(0,0,0,.45);
+        --shadow:0 10px 24px rgba(0,0,0,.18);
+      }
+      *{box-sizing:border-box}
+      body{
+        margin:0; font-family:"Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        background:var(--bg); color:var(--text);
+      }
 
-            <div>
+      /* ---------- NAVBAR ---------- */
+      .navbar{
+        position:fixed; inset:0 0 auto 0; height:66px; z-index:1000;
+        display:flex; align-items:center; justify-content:space-between;
+        padding:0 18px;
+        background:linear-gradient(180deg, var(--red) 0%, var(--red-dark) 100%);
+        color:#fff; box-shadow:var(--shadow);
+      }
+      .brand{display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:.2px}
+      .leaf{
+        width:22px; height:22px; display:inline-block;
+        -webkit-mask:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="white" d="M12 2l2.39 4.84L20 7.27l-4 3.9.94 5.48L12 14.77 7.06 16.65 8 11.17 4 7.27l5.61-.43z"/></svg>') center/contain no-repeat;
+                mask:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="white" d="M12 2l2.39 4.84L20 7.27l-4 3.9.94 5.48L12 14.77 7.06 16.65 8 11.17 4 7.27l5.61-.43z"/></svg>') center/contain no-repeat;
+        background:#fff;
+      }
 
-                <button onclick="showCheap()">Affordable</button>
-                <button onclick="showCanadian()">Canadian</button>
-                <button onclick="showChinese()">Chinese</button>
-                <button onclick="showItalian()">Italian</button>
-                <button onclick="showIndian()">Indian</button>
-                <div id="map"></div>
-    </div>
+      .nav-left{display:flex; align-items:center; gap:18px}
+      .menu{position:relative}
+      .menu > button{
+        background:transparent; border:0; color:#fff; font-weight:700; cursor:pointer;
+        padding:8px 10px; border-radius:10px;
+      }
+      .menu > button:hover{background:rgba(255,255,255,.12)}
+      .menu[aria-expanded="true"] > button{background:rgba(255,255,255,.18)}
 
+      /* Dropdown */
+      .dropdown{
+        position:absolute; top:100%; left:0; min-width:240px;
+        background:var(--surface); color:var(--ink); border-radius:12px; padding:8px;
+        box-shadow:var(--shadow); margin-top:8px; display:none;
+      }
+      .menu[aria-expanded="true"] .dropdown{display:block}
+      .dropdown h4{
+        margin:6px 8px 6px; font-size:.82rem; letter-spacing:.02em; color:var(--muted); text-transform:uppercase;
+      }
+      .dropdown a, .dropdown button.action{
+        display:flex; align-items:center; gap:10px; width:100%;
+        padding:10px 12px; border-radius:10px; border:0; background:transparent;
+        color:var(--ink); text-decoration:none; font-weight:600; cursor:pointer;
+      }
+      .dropdown a:hover, .dropdown button.action:hover{background:#f3f5f7}
 
-    <style>
+      /* Nested submenu (for Universities) */
+      .submenu{position:relative}
+      .submenu .dropdown{left:100%; top:0; margin-left:8px}
 
-      #language-selector {
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        z-index: 999;
-        background: white;
-        padding: 5px 10px;
-        border-radius: 6px;
-        font-size: 14px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+      /* Hamburger button */
+      .menu-btn{
+        display:inline-flex; align-items:center; justify-content:center;
+        width:44px; height:44px; border:0; border-radius:10px;
+        background:transparent; cursor:pointer; outline:none;
+      }
+      .menu-btn:hover{background:rgba(255,255,255,.12)}
+      .menu-icon, .menu-icon::before, .menu-icon::after{
+        content:""; display:block; width:24px; height:2.5px; border-radius:2px;
+        background:#fff; position:relative; transition:.2s ease;
+      }
+      .menu-icon::before{position:absolute; top:-7px}
+      .menu-icon::after{position:absolute; top:7px}
+
+      @media (max-width: 980px){ .nav-left{display:none} }
+
+      /* ---------- DRAWER ---------- */
+      .overlay{position:fixed; inset:0; background:var(--overlay); opacity:0; visibility:hidden; transition:.25s; z-index:1090;}
+      .overlay.show{opacity:1; visibility:visible}
+      .sidebar{
+        position:fixed; top:0; right:0; height:100%; width:340px;
+        transform:translateX(100%); transition:transform .28s ease;
+        background:var(--surface); z-index:1100; box-shadow:-10px 0 24px rgba(0,0,0,.2);
+        display:flex; flex-direction:column;
+      }
+      .sidebar.open{transform:translateX(0)}
+      .drawer-head{
+        height:66px; padding:0 16px; display:flex; align-items:center; justify-content:space-between;
+        background:linear-gradient(180deg, var(--red) 0%, var(--red-dark) 100%); color:#fff; font-weight:800;
+      }
+      .closebtn{width:36px; height:36px; border:0; border-radius:8px; background:transparent; color:#fff; font-size:24px; cursor:pointer}
+      .drawer-content{padding:12px 12px 0 12px; overflow:auto}
+      .cta-signin{
+        display:block; width:100%; text-align:center; padding:12px 14px; margin:10px 0 6px;
+        background:var(--gold); color:#111; border-radius:12px; font-weight:800; text-decoration:none;
+        box-shadow:0 6px 18px rgba(245,165,36,.35);
+      }
+      .drawer-section{margin:10px 0; border-radius:12px; background:#f7f8fa; padding:10px}
+      .drawer-title{font-size:.92rem; color:var(--muted); font-weight:700; text-transform:uppercase; margin:2px 6px 8px}
+
+      .drawer-link, .drawer-button{
+        display:flex; align-items:center; justify-content:space-between; gap:10px;
+        width:100%; padding:10px 12px; border-radius:10px; border:0; background:#fff; cursor:pointer; text-align:left;
+        font-weight:600; color:var(--ink);
+      }
+      .drawer-link:hover, .drawer-button:hover{background:#eceef2}
+
+      .province-list{display:none; margin-top:8px}
+      .province-list.open{display:block}
+      .province-list button{display:block; width:100%; padding:8px 10px; margin:4px 0; border:0; border-radius:8px; background:#fff; cursor:pointer}
+      .province-list button:hover{background:#eceef2}
+
+      /* Sign out footer */
+      .drawer-footer{margin-top:auto; padding:10px 12px 16px}
+      .divider{border:0; border-top:1px solid #e4e6ea; margin:6px 0 12px}
+      .signout{
+        display:block; width:100%; padding:12px 14px; border:0; border-radius:10px;
+        background:var(--red-dark); color:#fff; font-weight:800; cursor:pointer;
+      }
+
+      /* ---------- MAIN ---------- */
+      main{margin-top:66px; padding:28px 18px 16px}
+      .hero{
+        max-width:1280px; margin:0 auto; display:grid; grid-template-columns:1.05fr 1.4fr; gap:24px; align-items:center;
+      }
+      @media (max-width: 960px){ .hero{grid-template-columns:1fr} }
+      h1{margin:0 0 8px; font-size:clamp(2rem, 4vw, 3rem); font-weight:800; color:var(--ink)}
+      p.lead{margin:0 0 16px; color:var(--muted)}
+
+      #map{
+        height:70vh; width:100%; border-radius:14px; background:#e7e7e7; box-shadow:var(--shadow);
       }
     </style>
   </head>
+
   <body>
-    <div id="language-selector">
-      <label for="language">🌐 Language:</label>
-      <select id="language" onchange="changeLanguage(this.value)">
-        <option value="en" selected>English</option>
-        <option value="fr">French</option>
-        <option value="es">Spanish</option>
-        <option value="zh-CN">Chinese (Simplified)</option>
-        <option value="zh-TW">Chinese (Traditional)</option>
-        <option value="hi">Hindi</option>
-        <option value="ja">Japanese</option>
-        <option value="ko">Korean</option>
-      </select>
-    </div>
+    <!-- NAVBAR -->
+    <nav class="navbar" role="navigation" aria-label="Main">
+      <div class="brand"><span class="leaf" aria-hidden="true"></span><span>CanFind</span></div>
 
-    <div id="map"></div>
+      <!-- TOP NAV with DROPDOWNS -->
+      <div class="nav-left" aria-label="Primary">
+        <!-- FOOD -->
+        <div class="menu" aria-expanded="false">
+          <button type="button">Food ▾</button>
+          <div class="dropdown">
+            <h4>Cuisines</h4>
+            <button class="action" onclick="showCanadian()">Canadian</button>
+            <button class="action" onclick="showChinese()">Chinese</button>
+            <button class="action" onclick="showIndian()">Indian</button>
+            <button class="action" onclick="showItalian()">Italian</button>
+            <button class="action" onclick="showJapanese && showJapanese()">Japanese</button>
+            <button class="action" onclick="showKorean && showKorean()">Korean</button>
+            <button class="action" onclick="showVietnamese && showVietnamese()">Vietnamese</button>
+            <button class="action" onclick="showMiddleEastern && showMiddleEastern()">Middle Eastern</button>
+            <button class="action" onclick="showCaribbean && showCaribbean()">Caribbean</button>
+            <button class="action" onclick="showFilipino && showFilipino()">Filipino</button>
+            <button class="action" onclick="showAfrican && showAfrican()">African</button>
+            <button class="action" onclick="showLatinAmerican && showLatinAmerican()">Latin American</button>
+            <h4>Budget</h4>
+            <button class="action" onclick="showCheap()">Affordable</button>
+            <button class="action" onclick="showMid && showMid()">Mid-Range</button>
+            <button class="action" onclick="showSplurge && showSplurge()">Splurge</button>
+          </div>
+        </div>
 
-    <script src="script.js"></script>
+        <!-- TRAVEL -->
+        <div class="menu" aria-expanded="false">
+          <button type="button">Travel ▾</button>
+          <div class="dropdown">
+            <button class="action" onclick="showMuseums && showMuseums()">Museums & Galleries</button>
+            <button class="action" onclick="showFestivals && showFestivals()">Festivals & Events</button>
+            <button class="action" onclick="showParks && showParks()">Parks & Nature</button>
+            <button class="action" onclick="showLandmarks && showLandmarks()">Landmarks</button>
+            <button class="action" onclick="showTransit && showTransit()">Transit & Passes</button>
+          </div>
+        </div>
 
+        <!-- COMMUNITY (with Universities submenu) -->
+        <div class="menu" aria-expanded="false">
+          <button type="button">Community ▾</button>
+          <div class="dropdown">
+            <button class="action" onclick="showSettlement && showSettlement()">Settlement Centres</button>
+            <button class="action" onclick="showLanguageExchange && showLanguageExchange()">Language Exchange</button>
+            <button class="action" onclick="showVolunteer && showVolunteer()">Volunteer</button>
+
+            <div class="menu submenu" aria-expanded="false">
+              <button type="button" class="action">Universities ▸</button>
+              <div class="dropdown">
+                <h4>GTA</h4>
+                <button class="action" onclick="showUofT && showUofT()">University of Toronto</button>
+                <button class="action" onclick="showTMU && showTMU()">Toronto Metropolitan (TMU)</button>
+                <button class="action" onclick="showYork && showYork()">York University</button>
+                <button class="action" onclick="showOCAD && showOCAD()">OCAD University</button>
+                <button class="action" onclick="showUTM && showUTM()">U of T Mississauga</button>
+                <button class="action" onclick="showUTSC && showUTSC()">U of T Scarborough</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CONNECT -->
+        <div class="menu" aria-expanded="false">
+          <button type="button">Connect ▾</button>
+          <div class="dropdown">
+            <button class="action" onclick="showChat && showChat()">Pre-written Messages</button>
+            <button class="action" onclick="showGroups && showGroups()">WhatsApp / Discord</button>
+            <button class="action" onclick="showSupport && showSupport()">Support & Resources</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- HAMBURGER -->
+      <button id="menu-button" class="menu-btn" aria-label="Open menu">
+        <span class="menu-icon"></span>
+      </button>
+    </nav>
+
+    <!-- DRAWER -->
+    <div id="overlay" class="overlay" aria-hidden="true"></div>
+    <aside id="sidebar" class="sidebar" aria-hidden="true">
+      <div class="drawer-head">
+        <span>Menu</span>
+        <button id="close-sidebar" class="closebtn" aria-label="Close">×</button>
+      </div>
+
+      <div class="drawer-content">
+        <!-- Profile CTA -->
+        <a href="#" class="cta-signin">👤 Profile / Sign In</a>
+
+        <!-- Regions (Province) -->
+        <div class="drawer-section">
+          <div class="drawer-title">Regions</div>
+          <button id="province-toggle" class="drawer-button" type="button">
+            Choose Province <span>▾</span>
+          </button>
+          <div id="province-list" class="province-list">
+            <button onclick="selectProvince && selectProvince('ON')">Ontario</button>
+            <button onclick="selectProvince && selectProvince('QC')">Québec</button>
+            <button onclick="selectProvince && selectProvince('BC')">British Columbia</button>
+            <button onclick="selectProvince && selectProvince('AB')">Alberta</button>
+            <button onclick="selectProvince && selectProvince('MB')">Manitoba</button>
+            <button onclick="selectProvince && selectProvince('SK')">Saskatchewan</button>
+            <button onclick="selectProvince && selectProvince('NS')">Nova Scotia</button>
+            <button onclick="selectProvince && selectProvince('NB')">New Brunswick</button>
+            <button onclick="selectProvince && selectProvince('NL')">Newfoundland & Labrador</button>
+            <button onclick="selectProvince && selectProvince('PE')">Prince Edward Island</button>
+            <button onclick="selectProvince && selectProvince('NT')">Northwest Territories</button>
+            <button onclick="selectProvince && selectProvince('YT')">Yukon</button>
+            <button onclick="selectProvince && selectProvince('NU')">Nunavut</button>
+          </div>
+        </div>
+
+        <!-- Utilities -->
+        <div class="drawer-section">
+          <div class="drawer-title">Preferences</div>
+          <button class="drawer-link" type="button">🌐 Change Language</button>
+          <button class="drawer-link" type="button">♿ Accessibility</button>
+          <button class="drawer-link" type="button">🛠️ Settings</button>
+          <button class="drawer-link" type="button">📨 Help & Contact</button>
+        </div>
+      </div>
+
+      <div class="drawer-footer">
+        <hr class="divider" />
+        <button class="signout" type="button">Sign Out</button>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main>
+      <section class="hero" aria-label="Explore Canada">
+        <header>
+          <h1>Explore Canada</h1>
+          <p class="lead">Find food, festivals, and community support across the GTA — built for newcomers and students.</p>
+        </header>
+        <div id="map" role="region" aria-label="Map of nearby options"></div>
+      </section>
+    </main>
+
+    <!-- SCRIPTS -->
+    <script>
+      // NAV dropdown logic (click to open/close; closes others)
+      function setupDropdowns(root){
+        const menus = [...root.querySelectorAll('.menu')];
+        menus.forEach(m=>{
+          const btn = m.querySelector(':scope > button');
+          btn.addEventListener('click', e=>{
+            e.stopPropagation();
+            const isOpen = m.getAttribute('aria-expanded') === 'true';
+            menus.forEach(x=>x.setAttribute('aria-expanded','false'));
+            m.setAttribute('aria-expanded', String(!isOpen));
+          });
+        });
+        document.addEventListener('click', ()=> menus.forEach(x=>x.setAttribute('aria-expanded','false')));
+      }
+      setupDropdowns(document);
+
+      // Handle nested submenu (Universities)
+      document.querySelectorAll('.submenu > button').forEach(b=>{
+        b.addEventListener('click', e=>{
+          e.stopPropagation();
+          const parent = b.closest('.submenu');
+          const open = parent.getAttribute('aria-expanded')==='true';
+          parent.setAttribute('aria-expanded', String(!open));
+        });
+      });
+
+      // Drawer logic
+      const sidebar = document.getElementById("sidebar");
+      const menuButton = document.getElementById("menu-button");
+      const closeSidebar = document.getElementById("close-sidebar");
+      const overlay = document.getElementById("overlay");
+      const provinceToggle = document.getElementById('province-toggle');
+      const provinceList = document.getElementById('province-list');
+
+      function openMenu(){
+        sidebar.classList.add("open");
+        overlay.classList.add("show");
+        sidebar.setAttribute("aria-hidden","false");
+        overlay.setAttribute("aria-hidden","false");
+      }
+      function closeMenu(){
+        sidebar.classList.remove("open");
+        overlay.classList.remove("show");
+        sidebar.setAttribute("aria-hidden","true");
+        overlay.setAttribute("aria-hidden","true");
+      }
+      menuButton.addEventListener("click", openMenu);
+      closeSidebar.addEventListener("click", closeMenu);
+      overlay.addEventListener("click", closeMenu);
+      document.addEventListener("keydown", (e)=>{ if(e.key === "Escape") closeMenu(); });
+
+      // Province dropdown
+      provinceToggle.addEventListener('click', ()=>{
+        provinceList.classList.toggle('open');
+      });
+
+      // Optional: stub for province selection
+      function selectProvince(code){
+        console.log('Province selected:', code);
+        // TODO: re-center map / query places by province
+        closeMenu();
+      }
+      window.selectProvince = selectProvince;
+    </script>
+
+    <!-- Keep your existing app hooks -->
+    <script type="module" src="/src/main.jsx"></script>
+    <script src="/script.js"></script>
+
+    <!-- Google Maps -->
     <script async
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA81uxRaknk0hRxBxflcXjLjsSoM6Mz1F4&libraries=places&callback=initMap">
     
     </script>
-
-    
-</body>
+  </body>
 </html>

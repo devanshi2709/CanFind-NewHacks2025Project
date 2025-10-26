@@ -6,40 +6,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Explore Canada - CanFind</title>
 
-    <!-- Font -->
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800&family=Source+Serif+4:wght@700;800&display=swap" rel="stylesheet">
 
     <style>
-      /* ---------- THEME ---------- */
       :root{
-        --red:#d32f2f;         /* Canada red */
-        --red-dark:#b71c1c;
-        --gold:#f5a524;        /* fall accent */
-        --ink:#101215;
-        --text:#1f2328;
-        --muted:#667085;
-        --bg:#fffdfb;
-        --surface:#ffffff;
-        --overlay:rgba(0,0,0,.45);
-        --shadow:0 10px 24px rgba(0,0,0,.18);
+        --red:#d32f2f; --red-dark:#b71c1c; --gold:#f4a100;
+        --ink:#111318; --text:#1f2328; --muted:#667085;
+        --bg:#fffdfb; --surface:#ffffff; --overlay:rgba(0,0,0,.45);
+        --shadow:0 10px 24px rgba(0,0,0,.16);
+        --maxw:1280px;
       }
       *{box-sizing:border-box}
+      html{scroll-behavior:smooth}
       body{
-        margin:0; font-family:"Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-        background:var(--bg); color:var(--text);
+        margin:0; background:var(--bg); color:var(--text);
+        font-family:"Source Sans 3", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       }
 
-      /* ---------- NAVBAR ---------- */
+      /* ─────────── NAVBAR ─────────── */
       .navbar{
         position:fixed; inset:0 0 auto 0; height:66px; z-index:1000;
         display:flex; align-items:center; justify-content:space-between;
-        padding:0 18px;
+        padding:0 18px; color:#fff;
         background:linear-gradient(180deg, var(--red) 0%, var(--red-dark) 100%);
-        color:#fff; box-shadow:var(--shadow);
+        box-shadow:var(--shadow);
       }
-      .brand{display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:.2px}
+      .brand{display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:.2px; font-size:18px}
       .leaf{
         width:22px; height:22px; display:inline-block;
         -webkit-mask:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="white" d="M12 2l2.39 4.84L20 7.27l-4 3.9.94 5.48L12 14.77 7.06 16.65 8 11.17 4 7.27l5.61-.43z"/></svg>') center/contain no-repeat;
@@ -51,38 +46,32 @@
       .menu{position:relative}
       .menu > button{
         background:transparent; border:0; color:#fff; font-weight:700; cursor:pointer;
-        padding:8px 10px; border-radius:10px;
+        padding:8px 12px; border-radius:10px; font-size:16px; /* bigger */
       }
       .menu > button:hover{background:rgba(255,255,255,.12)}
-      .menu[aria-expanded="true"] > button{background:rgba(255,255,255,.18)}
-
-      /* Dropdown */
       .dropdown{
         position:absolute; top:100%; left:0; min-width:240px;
         background:var(--surface); color:var(--ink); border-radius:12px; padding:8px;
-        box-shadow:var(--shadow); margin-top:8px; display:none;
+        box-shadow:var(--shadow); margin-top:8px; display:none; z-index:999;
       }
-      .menu[aria-expanded="true"] .dropdown{display:block}
+      .menu[aria-expanded="true"] > .dropdown{display:block}
       .dropdown h4{
-        margin:6px 8px 6px; font-size:.82rem; letter-spacing:.02em; color:var(--muted); text-transform:uppercase;
+        margin:6px 8px; font-size:.82rem; letter-spacing:.02em; color:var(--muted); text-transform:uppercase;
       }
-      .dropdown a, .dropdown button.action{
-        display:flex; align-items:center; gap:10px; width:100%;
+      .dropdown .action{
+        display:flex; align-items:center; gap:10px;
         padding:10px 12px; border-radius:10px; border:0; background:transparent;
-        color:var(--ink); text-decoration:none; font-weight:600; cursor:pointer;
+        color:var(--ink); font-weight:600; cursor:pointer; width:100%; text-align:left;
       }
-      .dropdown a:hover, .dropdown button.action:hover{background:#f3f5f7}
+      .dropdown .action:hover{background:#f3f5f7}
 
-      /* Nested submenu (for Universities) */
+      /* Secondary submenu (hover-only) */
       .submenu{position:relative}
-      .submenu .dropdown{left:100%; top:0; margin-left:8px}
+      .submenu > .dropdown{top:0; left:100%; margin-left:8px; display:none}
+      .submenu:hover > .dropdown{display:block}
 
-      /* Hamburger button */
-      .menu-btn{
-        display:inline-flex; align-items:center; justify-content:center;
-        width:44px; height:44px; border:0; border-radius:10px;
-        background:transparent; cursor:pointer; outline:none;
-      }
+      /* Hamburger */
+      .menu-btn{display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; border:0; border-radius:10px; background:transparent; cursor:pointer}
       .menu-btn:hover{background:rgba(255,255,255,.12)}
       .menu-icon, .menu-icon::before, .menu-icon::after{
         content:""; display:block; width:24px; height:2.5px; border-radius:2px;
@@ -90,11 +79,10 @@
       }
       .menu-icon::before{position:absolute; top:-7px}
       .menu-icon::after{position:absolute; top:7px}
-
       @media (max-width: 980px){ .nav-left{display:none} }
 
-      /* ---------- DRAWER ---------- */
-      .overlay{position:fixed; inset:0; background:var(--overlay); opacity:0; visibility:hidden; transition:.25s; z-index:1090;}
+      /* ─────────── DRAWER ─────────── */
+      .overlay{position:fixed; inset:0; background:var(--overlay); opacity:0; visibility:hidden; transition:.25s; z-index:1090}
       .overlay.show{opacity:1; visibility:visible}
       .sidebar{
         position:fixed; top:0; right:0; height:100%; width:340px;
@@ -103,83 +91,151 @@
         display:flex; flex-direction:column;
       }
       .sidebar.open{transform:translateX(0)}
-      .drawer-head{
-        height:66px; padding:0 16px; display:flex; align-items:center; justify-content:space-between;
-        background:linear-gradient(180deg, var(--red) 0%, var(--red-dark) 100%); color:#fff; font-weight:800;
-      }
+      .drawer-head{height:66px; padding:0 16px; display:flex; align-items:center; justify-content:space-between; background:linear-gradient(180deg, var(--red) 0%, var(--red-dark) 100%); color:#fff; font-weight:800}
       .closebtn{width:36px; height:36px; border:0; border-radius:8px; background:transparent; color:#fff; font-size:24px; cursor:pointer}
       .drawer-content{padding:12px 12px 0 12px; overflow:auto}
-      .cta-signin{
-        display:block; width:100%; text-align:center; padding:12px 14px; margin:10px 0 6px;
-        background:var(--gold); color:#111; border-radius:12px; font-weight:800; text-decoration:none;
-        box-shadow:0 6px 18px rgba(245,165,36,.35);
-      }
+      .cta-signin{display:block; width:100%; text-align:center; padding:12px 14px; margin:10px 0 6px; background:var(--gold); color:#111; border-radius:12px; font-weight:800; text-decoration:none; box-shadow:0 6px 18px rgba(245,165,36,.35)}
       .drawer-section{margin:10px 0; border-radius:12px; background:#f7f8fa; padding:10px}
       .drawer-title{font-size:.92rem; color:var(--muted); font-weight:700; text-transform:uppercase; margin:2px 6px 8px}
-
-      .drawer-link, .drawer-button{
-        display:flex; align-items:center; justify-content:space-between; gap:10px;
-        width:100%; padding:10px 12px; border-radius:10px; border:0; background:#fff; cursor:pointer; text-align:left;
-        font-weight:600; color:var(--ink);
-      }
+      .drawer-link, .drawer-button{display:flex; align-items:center; justify-content:space-between; gap:10px; width:100%; padding:10px 12px; border-radius:10px; border:0; background:#fff; cursor:pointer; text-align:left; font-weight:600; color:var(--ink)}
       .drawer-link:hover, .drawer-button:hover{background:#eceef2}
-
       .province-list{display:none; margin-top:8px}
       .province-list.open{display:block}
       .province-list button{display:block; width:100%; padding:8px 10px; margin:4px 0; border:0; border-radius:8px; background:#fff; cursor:pointer}
       .province-list button:hover{background:#eceef2}
-
-      /* Sign out footer */
       .drawer-footer{margin-top:auto; padding:10px 12px 16px}
       .divider{border:0; border-top:1px solid #e4e6ea; margin:6px 0 12px}
-      .signout{
-        display:block; width:100%; padding:12px 14px; border:0; border-radius:10px;
-        background:var(--red-dark); color:#fff; font-weight:800; cursor:pointer;
+      .signout{display:block; width:100%; padding:12px 14px; border:0; border-radius:10px; background:var(--red-dark); color:#fff; font-weight:800; cursor:pointer}
+
+      /* ─────────── MAIN banners ─────────── */
+      main{margin-top:66px}
+      .banners{
+        max-width:var(--maxw);
+        margin:16px auto 40px;
+        display:flex; flex-direction:column; gap:14px;
+        padding:0 12px;
+      }
+      .banner{
+        position:relative; overflow:hidden; border-radius:18px; background:#000;
+        width:min(92vw, var(--maxw)); margin-inline:auto;
+        box-shadow:var(--shadow);
+      }
+      .banner img{
+        width:100%; height:100%; object-fit:cover; aspect-ratio: 36/9; /* narrower ribbons */
+        filter:saturate(1.05) contrast(1.02);
+        transform:scale(1.02); transition:transform .5s ease, filter .5s ease;
+      }
+      .banner::after{
+        content:""; position:absolute; inset:0;
+        background:linear-gradient(180deg, rgba(0,0,0,.10) 10%, rgba(0,0,0,.58) 100%);
+        z-index:1;
+      }
+      .banner:hover img{ transform:scale(1.06); filter:saturate(1.1) }
+
+      .banner-content{
+        position:absolute; inset:auto 0 0 0; z-index:2; color:#fff;
+        padding:18px 20px 22px; display:flex; flex-direction:column; gap:10px;
+      }
+      .banner h2{
+        margin:0; font-family:"Source Serif 4", Georgia, serif;
+        font-weight:800; letter-spacing:.2px;
+        font-size:clamp(1.6rem, 3.4vw, 2.4rem);
+        line-height:1.1;
+      }
+      .banner p{margin:0; max-width:60ch; opacity:.98; font-size:1.05rem}
+      .actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:6px}
+      .btn{
+        display:inline-block; padding:11px 16px; border-radius:12px; font-weight:800; text-decoration:none; border:2px solid transparent
+      }
+      .btn-primary{background:#d32f2f; color:#fff; border-color:#b71c1c}
+      .btn-ghost{background:rgba(255,255,255,.16); color:#fff; border-color:rgba(255,255,255,.35)}
+      @media (max-width: 520px){ .actions{flex-direction:column} .btn{width:100%; text-align:center} }
+
+      /* ─────────── FOOTER ─────────── */
+      .site-footer{background:#231a4a; color:#fff; margin-top:32px}
+      .site-footer a{color:#e8e8f5; text-decoration:none}
+      .site-footer a:hover{color:#fff; text-decoration:underline}
+      .footer-top{
+        max-width: var(--maxw); margin: 0 auto; padding: 28px 18px;
+        display:grid; gap:24px; grid-template-columns: 2fr repeat(3, 1fr);
+      }
+      .footer-about p{margin:8px 0 0; color:#d7d7ea; line-height:1.5}
+      .footer-col h4, .footer-about h3{margin:0 0 8px}
+      .footer-col ul{list-style:none; padding:0; margin:0}
+      .footer-col li{margin:6px 0}
+      .footer-bottom{
+        display:flex; align-items:center; justify-content:space-between;
+        gap:12px; padding:10px 18px; background:#6b4ea8; font-size:.95rem;
+      }
+      .footer-logos a{margin-right:10px; font-size:20px}
+      @media (max-width: 900px){ .footer-top{grid-template-columns: 1fr 1fr} }
+      @media (max-width: 560px){
+        .footer-top{grid-template-columns: 1fr}
+        .footer-bottom{flex-direction:column; align-items:flex-start}
       }
 
-      /* ---------- MAIN ---------- */
-      main{margin-top:66px; padding:28px 18px 16px}
-      .hero{
-        max-width:1280px; margin:0 auto; display:grid; grid-template-columns:1.05fr 1.4fr; gap:24px; align-items:center;
+      /* ─────────── COOKIES (banner + modal) ─────────── */
+      :root{ --ck-red:#d32f2f; --ck-red-dark:#b71c1c; --ck-bg:#fff; --ck-text:#1f2328; --ck-muted:#6b7280; --ck-shadow:0 10px 30px rgba(0,0,0,.2) }
+      .ck-btn{font:600 14px/1.1 system-ui, -apple-system, "Source Sans 3", Arial; padding:12px 14px; border-radius:10px; border:2px solid transparent; cursor:pointer}
+      .ck-primary{background:var(--ck-red); color:#fff; border-color:var(--ck-red-dark)}
+      .ck-primary:hover{filter:brightness(1.05)}
+      .ck-outline{background:#fff; color:var(--ck-red-dark); border-color:var(--ck-red-dark)}
+      .ck-ghost{background:transparent; color:#fff; border-color:rgba(255,255,255,.5)}
+      .ck-banner{
+        position:fixed; left:50%; bottom:16px; transform:translateX(-50%);
+        width:min(900px, calc(100vw - 24px)); background:linear-gradient(180deg, var(--ck-red) 0%, var(--ck-red-dark) 100%);
+        color:#fff; border-radius:14px; box-shadow:var(--ck-shadow); padding:16px; z-index:2000;
+        display:grid; grid-template-columns:1fr auto; gap:16px; align-items:center;
       }
-      @media (max-width: 960px){ .hero{grid-template-columns:1fr} }
-      h1{margin:0 0 8px; font-size:clamp(2rem, 4vw, 3rem); font-weight:800; color:var(--ink)}
-      p.lead{margin:0 0 16px; color:var(--muted)}
-
-      #map{
-        height:70vh; width:100%; border-radius:14px; background:#e7e7e7; box-shadow:var(--shadow);
+      .ck-text p{margin:6px 0 0; color:#fefefe}
+      .ck-actions{display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end}
+      @media (max-width: 640px){ .ck-banner{grid-template-columns:1fr} .ck-actions{justify-content:stretch} .ck-btn{width:100%} }
+      .ck-overlay{position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:2100}
+      .ck-modal{
+        position:fixed; inset:50% auto auto 50%; transform:translate(-50%,-50%);
+        width:min(720px, calc(100vw - 32px)); max-height:80vh; overflow:auto;
+        background:var(--ck-bg); color:var(--ck-text); border-radius:16px; box-shadow:var(--ck-shadow); z-index:2200; padding:16px;
       }
+      .ck-modal-head{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:4px}
+      .ck-x{border:0; background:transparent; font-size:28px; line-height:1; cursor:pointer}
+      .ck-note{color:var(--ck-muted); margin:8px 2px 10px}
+      .ck-list{list-style:none; padding:0; margin:10px 0}
+      .ck-item{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px; border-radius:12px; background:#f7f8fa; margin-bottom:10px}
+      .ck-name{font-weight:700}
+      .ck-desc{font-size:.92rem; color:var(--ck-muted)}
+      .ck-modal-actions{display:flex; justify-content:flex-end; gap:10px; margin-top:8px}
+      .ck-switch{position:relative; width:48px; height:28px; display:inline-block}
+      .ck-switch input{opacity:0; width:0; height:0}
+      .ck-switch span{position:absolute; cursor:pointer; inset:0; background:#cbd5e1; border-radius:999px; transition:.2s}
+      .ck-switch span:before{content:""; position:absolute; height:22px; width:22px; left:3px; top:3px; background:white; border-radius:50%; transition:.2s; box-shadow:0 2px 6px rgba(0,0,0,.2)}
+      .ck-switch input:checked + span{background:#16a34a}
+      .ck-switch input:checked + span:before{transform:translateX(20px)}
+      .ck-switch input:disabled + span{background:#94a3b8; opacity:.8}
     </style>
   </head>
 
   <body>
-    <!-- NAVBAR -->
+    <!-- ─────────── NAVBAR ─────────── -->
     <nav class="navbar" role="navigation" aria-label="Main">
       <div class="brand"><span class="leaf" aria-hidden="true"></span><span>CanFind</span></div>
 
-      <!-- TOP NAV with DROPDOWNS -->
       <div class="nav-left" aria-label="Primary">
-        <!-- FOOD -->
+        <!-- FOOD (broader options) -->
         <div class="menu" aria-expanded="false">
           <button type="button">Food ▾</button>
           <div class="dropdown">
             <h4>Cuisines</h4>
-            <button class="action" onclick="showCanadian()">Canadian</button>
-            <button class="action" onclick="showChinese()">Chinese</button>
-            <button class="action" onclick="showIndian()">Indian</button>
-            <button class="action" onclick="showItalian()">Italian</button>
-            <button class="action" onclick="showJapanese && showJapanese()">Japanese</button>
-            <button class="action" onclick="showKorean && showKorean()">Korean</button>
-            <button class="action" onclick="showVietnamese && showVietnamese()">Vietnamese</button>
-            <button class="action" onclick="showMiddleEastern && showMiddleEastern()">Middle Eastern</button>
-            <button class="action" onclick="showCaribbean && showCaribbean()">Caribbean</button>
-            <button class="action" onclick="showFilipino && showFilipino()">Filipino</button>
-            <button class="action" onclick="showAfrican && showAfrican()">African</button>
-            <button class="action" onclick="showLatinAmerican && showLatinAmerican()">Latin American</button>
+            <button class="action">Canadian</button>
+            <button class="action">Asian</button>
+            <button class="action">European</button>
+            <button class="action">Middle East & North Africa</button>
+            <button class="action">Latin America & Caribbean</button>
+            <button class="action">African</button>
+            <button class="action">Vegetarian / Vegan</button>
             <h4>Budget</h4>
-            <button class="action" onclick="showCheap()">Affordable</button>
-            <button class="action" onclick="showMid && showMid()">Mid-Range</button>
-            <button class="action" onclick="showSplurge && showSplurge()">Splurge</button>
+            <button class="action">Affordable</button>
+            <button class="action">Mid-Range</button>
+            <button class="action">Splurge</button>
           </div>
         </div>
 
@@ -187,44 +243,43 @@
         <div class="menu" aria-expanded="false">
           <button type="button">Travel ▾</button>
           <div class="dropdown">
-            <button class="action" onclick="showMuseums && showMuseums()">Museums & Galleries</button>
-            <button class="action" onclick="showFestivals && showFestivals()">Festivals & Events</button>
-            <button class="action" onclick="showParks && showParks()">Parks & Nature</button>
-            <button class="action" onclick="showLandmarks && showLandmarks()">Landmarks</button>
-            <button class="action" onclick="showTransit && showTransit()">Transit & Passes</button>
+            <button class="action">Museums & Galleries</button>
+            <button class="action">Festivals & Events</button>
+            <button class="action">Parks & Nature</button>
+            <button class="action">Landmarks</button>
+            <button class="action">Transit & Passes</button>
           </div>
         </div>
 
-        <!-- COMMUNITY (with Universities submenu) -->
+        <!-- COMMUNITY with hover-only secondary submenu -->
         <div class="menu" aria-expanded="false">
           <button type="button">Community ▾</button>
           <div class="dropdown">
-            <button class="action" onclick="showSettlement && showSettlement()">Settlement Centres</button>
-            <button class="action" onclick="showLanguageExchange && showLanguageExchange()">Language Exchange</button>
-            <button class="action" onclick="showVolunteer && showVolunteer()">Volunteer</button>
+            <button class="action">Settlement Centres</button>
+            <button class="action">Language Exchange</button>
+            <button class="action">Volunteer</button>
 
-            <div class="menu submenu" aria-expanded="false">
+            <div class="menu submenu">
               <button type="button" class="action">Universities ▸</button>
               <div class="dropdown">
                 <h4>GTA</h4>
-                <button class="action" onclick="showUofT && showUofT()">University of Toronto</button>
-                <button class="action" onclick="showTMU && showTMU()">Toronto Metropolitan (TMU)</button>
-                <button class="action" onclick="showYork && showYork()">York University</button>
-                <button class="action" onclick="showOCAD && showOCAD()">OCAD University</button>
-                <button class="action" onclick="showUTM && showUTM()">U of T Mississauga</button>
-                <button class="action" onclick="showUTSC && showUTSC()">U of T Scarborough</button>
+                <button class="action">University of Toronto</button>
+                <button class="action">Toronto Metropolitan (TMU)</button>
+                <button class="action">York University</button>
+                <button class="action">OCAD University</button>
+                <button class="action">U of T Mississauga</button>
+                <button class="action">U of T Scarborough</button>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- CONNECT -->
+        <!-- CONNECT (two items only) -->
         <div class="menu" aria-expanded="false">
           <button type="button">Connect ▾</button>
           <div class="dropdown">
-            <button class="action" onclick="showChat && showChat()">Pre-written Messages</button>
-            <button class="action" onclick="showGroups && showGroups()">WhatsApp / Discord</button>
-            <button class="action" onclick="showSupport && showSupport()">Support & Resources</button>
+            <button class="action">MapleChat Messaging</button>
+            <button class="action">Support & Resources</button>
           </div>
         </div>
       </div>
@@ -235,7 +290,7 @@
       </button>
     </nav>
 
-    <!-- DRAWER -->
+    <!-- ─────────── DRAWER ─────────── -->
     <div id="overlay" class="overlay" aria-hidden="true"></div>
     <aside id="sidebar" class="sidebar" aria-hidden="true">
       <div class="drawer-head">
@@ -244,33 +299,21 @@
       </div>
 
       <div class="drawer-content">
-        <!-- Profile CTA -->
         <a href="#" class="cta-signin">👤 Profile / Sign In</a>
 
-        <!-- Regions (Province) -->
         <div class="drawer-section">
           <div class="drawer-title">Regions</div>
           <button id="province-toggle" class="drawer-button" type="button">
             Choose Province <span>▾</span>
           </button>
           <div id="province-list" class="province-list">
-            <button onclick="selectProvince && selectProvince('ON')">Ontario</button>
-            <button onclick="selectProvince && selectProvince('QC')">Québec</button>
-            <button onclick="selectProvince && selectProvince('BC')">British Columbia</button>
-            <button onclick="selectProvince && selectProvince('AB')">Alberta</button>
-            <button onclick="selectProvince && selectProvince('MB')">Manitoba</button>
-            <button onclick="selectProvince && selectProvince('SK')">Saskatchewan</button>
-            <button onclick="selectProvince && selectProvince('NS')">Nova Scotia</button>
-            <button onclick="selectProvince && selectProvince('NB')">New Brunswick</button>
-            <button onclick="selectProvince && selectProvince('NL')">Newfoundland & Labrador</button>
-            <button onclick="selectProvince && selectProvince('PE')">Prince Edward Island</button>
-            <button onclick="selectProvince && selectProvince('NT')">Northwest Territories</button>
-            <button onclick="selectProvince && selectProvince('YT')">Yukon</button>
-            <button onclick="selectProvince && selectProvince('NU')">Nunavut</button>
+            <button>Ontario</button><button>Québec</button><button>British Columbia</button><button>Alberta</button>
+            <button>Manitoba</button><button>Saskatchewan</button><button>Nova Scotia</button><button>New Brunswick</button>
+            <button>Newfoundland & Labrador</button><button>Prince Edward Island</button><button>Northwest Territories</button>
+            <button>Yukon</button><button>Nunavut</button>
           </div>
         </div>
 
-        <!-- Utilities -->
         <div class="drawer-section">
           <div class="drawer-title">Preferences</div>
           <button class="drawer-link" type="button">🌐 Change Language</button>
@@ -286,22 +329,201 @@
       </div>
     </aside>
 
-    <!-- MAIN -->
+    <!-- ─────────── MAIN: banners (order 4,1,2,3) ─────────── -->
     <main>
-      <section class="hero" aria-label="Explore Canada">
-        <header>
-          <h1>Explore Canada</h1>
-          <p class="lead">Find food, festivals, and community support across the GTA — built for newcomers and students.</p>
-        </header>
-        <div id="map" role="region" aria-label="Map of nearby options"></div>
+      <section class="banners" aria-label="Welcome and sections">
+        <!-- 4) Overall / Get Started -->
+        <article class="banner" id="overview">
+          <img src="/images/Toronto_Banner.png" alt="Aerial view of Toronto waterfront and skyline">
+          <div class="banner-content">
+            <h2>Welcome to CanFind</h2>
+            <p>Your friendly guide to food, events, and community services across the GTA — made for newcomers and students.</p>
+            <div class="actions">
+              <a class="btn btn-primary" href="#food">Get started</a>
+              <a class="btn btn-ghost" href="#about">About us</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- 1) Food -->
+        <article class="banner" id="food">
+          <img src="/images/Boxcar-Social-Toronto.jpg.png" alt="Coffees and pastries at a Toronto café">
+          <div class="banner-content">
+            <h2>Food & Cafés</h2>
+            <p>Inclusive cuisines from coast to coast — plus affordable picks and cozy study spots.</p>
+            <div class="actions">
+              <a class="btn btn-primary" href="#">Find places</a>
+              <a class="btn btn-ghost" href="#">Food guides</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- 2) Travel -->
+        <article class="banner" id="travel">
+          <img src="/images/downtowntorontoonwater.png" alt="Toronto skyline from the lake">
+          <div class="banner-content">
+            <h2>Travel & Events</h2>
+            <p>Museums, festivals, parks and landmark walks — plan a day out around the city.</p>
+            <div class="actions">
+              <a class="btn btn-primary" href="#">Plan a day out</a>
+              <a class="btn btn-ghost" href="#">See events</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- 3) Community & Culture -->
+        <article class="banner" id="community">
+          <img src="/images/romexterior.png" alt="Royal Ontario Museum exterior with Michael Lee-Chin Crystal">
+          <div class="banner-content">
+            <h2>Community & Culture</h2>
+            <p>Settlement help, language exchange, volunteer opportunities and cultural highlights.</p>
+            <div class="actions">
+              <a class="btn btn-primary" href="#">Find centres</a>
+              <a class="btn btn-ghost" href="#">How it works</a>
+            </div>
+          </div>
+        </article>
       </section>
     </main>
 
-    <!-- SCRIPTS -->
+    <!-- ─────────── FOOTER ─────────── -->
+    <footer class="site-footer" role="contentinfo">
+      <div class="footer-top">
+        <section class="footer-about">
+          <h3>About CanFind</h3>
+          <p>CanFind helps newcomers and students in the GTA quickly discover food, events, and community resources — with simple tools and clear guidance.</p>
+        </section>
+
+        <nav class="footer-col">
+          <h4>Explore</h4>
+          <ul>
+            <li><a href="#food">Food</a></li>
+            <li><a href="#travel">Travel</a></li>
+            <li><a href="#community">Community</a></li>
+            <li><a href="#overview">Connect</a></li>
+          </ul>
+        </nav>
+
+        <nav class="footer-col">
+          <h4>Resources</h4>
+          <ul>
+            <li><a href="#guide">Newcomer Guide</a></li>
+            <li><a href="#">Language Options</a></li>
+            <li><a href="#">Accessibility</a></li>
+          </ul>
+        </nav>
+
+        <nav class="footer-col">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#" id="open-cookie-settings">Cookie settings</a></li>
+            <li><a href="#">Privacy</a></li>
+            <li><a href="#">Terms</a></li>
+          </ul>
+        </nav>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="footer-logos">
+          <a aria-label="Facebook" href="#">🌐</a>
+          <a aria-label="Instagram" href="#">📷</a>
+          <a aria-label="X/Twitter" href="#">𝕏</a>
+          <a aria-label="YouTube" href="#">▶️</a>
+        </div>
+        <div class="copyright">© <span id="year"></span> CanFind. All rights reserved.</div>
+      </div>
+    </footer>
+
+    <!-- ─────────── COOKIES: Banner + Modal (now correctly inside <body>) ─────────── -->
+    <div id="cookie-banner" class="ck-banner" role="dialog" aria-live="polite" aria-label="Cookie consent" aria-modal="true" hidden>
+      <div class="ck-text">
+        <strong>We use cookies</strong>
+        <p>Choose “Accept all” to allow all cookies, or “Accept strictly necessary” to allow only essential cookies. You can manage preferences anytime.</p>
+      </div>
+      <div class="ck-actions">
+        <button id="ck-manage" class="ck-btn ck-ghost" type="button">Manage preferences</button>
+        <button id="ck-necessary" class="ck-btn ck-outline" type="button">Accept strictly necessary</button>
+        <button id="ck-accept" class="ck-btn ck-primary" type="button">Accept all</button>
+      </div>
+    </div>
+
+    <div id="ck-overlay" class="ck-overlay" hidden></div>
+    <div id="cookie-modal" class="ck-modal" role="dialog" aria-modal="true" aria-labelledby="ck-title" hidden>
+      <div class="ck-modal-head">
+        <h2 id="ck-title">Cookie preferences</h2>
+        <button id="ck-close" class="ck-x" aria-label="Close">×</button>
+      </div>
+
+      <p class="ck-note">Turn categories on or off. <strong>Strictly necessary</strong> cookies are required for the site to function and can’t be turned off.</p>
+
+      <ul class="ck-list">
+        <li class="ck-item">
+          <div>
+            <div class="ck-name">Strictly necessary</div>
+            <div class="ck-desc">Security, session, and core functionality.</div>
+          </div>
+          <label class="ck-switch">
+            <input type="checkbox" checked disabled aria-label="Strictly necessary is required">
+            <span></span>
+          </label>
+        </li>
+
+        <li class="ck-item">
+          <div>
+            <div class="ck-name">Analytics</div>
+            <div class="ck-desc">Helps us understand usage to improve the site.</div>
+          </div>
+          <label class="ck-switch">
+            <input type="checkbox" data-key="analytics">
+            <span></span>
+          </label>
+        </li>
+
+        <li class="ck-item">
+          <div>
+            <div class="ck-name">Performance</div>
+            <div class="ck-desc">Improves speed and reliability.</div>
+          </div>
+          <label class="ck-switch">
+            <input type="checkbox" data-key="performance">
+            <span></span>
+          </label>
+        </li>
+
+        <li class="ck-item">
+          <div>
+            <div class="ck-name">Functional</div>
+            <div class="ck-desc">Remembers settings like language or region.</div>
+          </div>
+          <label class="ck-switch">
+            <input type="checkbox" data-key="functional">
+            <span></span>
+          </label>
+        </li>
+
+        <li class="ck-item">
+          <div>
+            <div class="ck-name">Advertising</div>
+            <div class="ck-desc">Personalized ads and measuring ad performance.</div>
+          </div>
+          <label class="ck-switch">
+            <input type="checkbox" data-key="advertising">
+            <span></span>
+          </label>
+        </li>
+      </ul>
+
+      <div class="ck-modal-actions">
+        <button id="ck-cancel" class="ck-btn ck-ghost" type="button">Cancel</button>
+        <button id="ck-save" class="ck-btn ck-primary" type="button">Save my choices</button>
+      </div>
+    </div>
+
+    <!-- ─────────── SCRIPTS: Navigation, Drawer, Footer, Cookies ─────────── -->
     <script>
-      // NAV dropdown logic (click to open/close; closes others)
-      function setupDropdowns(root){
-        const menus = [...root.querySelectorAll('.menu')];
+      // Dropdowns (top-level open/close on click)
+      (function setupDropdowns(){
+        const menus = [...document.querySelectorAll('.menu:not(.submenu)')];
         menus.forEach(m=>{
           const btn = m.querySelector(':scope > button');
           btn.addEventListener('click', e=>{
@@ -312,20 +534,9 @@
           });
         });
         document.addEventListener('click', ()=> menus.forEach(x=>x.setAttribute('aria-expanded','false')));
-      }
-      setupDropdowns(document);
+      })();
 
-      // Handle nested submenu (Universities)
-      document.querySelectorAll('.submenu > button').forEach(b=>{
-        b.addEventListener('click', e=>{
-          e.stopPropagation();
-          const parent = b.closest('.submenu');
-          const open = parent.getAttribute('aria-expanded')==='true';
-          parent.setAttribute('aria-expanded', String(!open));
-        });
-      });
-
-      // Drawer logic
+      // Drawer (hamburger)
       const sidebar = document.getElementById("sidebar");
       const menuButton = document.getElementById("menu-button");
       const closeSidebar = document.getElementById("close-sidebar");
@@ -333,44 +544,64 @@
       const provinceToggle = document.getElementById('province-toggle');
       const provinceList = document.getElementById('province-list');
 
-      function openMenu(){
-        sidebar.classList.add("open");
-        overlay.classList.add("show");
-        sidebar.setAttribute("aria-hidden","false");
-        overlay.setAttribute("aria-hidden","false");
-      }
-      function closeMenu(){
-        sidebar.classList.remove("open");
-        overlay.classList.remove("show");
-        sidebar.setAttribute("aria-hidden","true");
-        overlay.setAttribute("aria-hidden","true");
-      }
+      function openMenu(){ sidebar.classList.add("open"); overlay.classList.add("show"); }
+      function closeMenu(){ sidebar.classList.remove("open"); overlay.classList.remove("show"); }
       menuButton.addEventListener("click", openMenu);
       closeSidebar.addEventListener("click", closeMenu);
       overlay.addEventListener("click", closeMenu);
-      document.addEventListener("keydown", (e)=>{ if(e.key === "Escape") closeMenu(); });
+      document.addEventListener("keydown", (e)=>{ if(e.key==="Escape") closeMenu(); });
+      provinceToggle.addEventListener('click', ()=>{ provinceList.classList.toggle('open'); });
 
-      // Province dropdown
-      provinceToggle.addEventListener('click', ()=>{
-        provinceList.classList.toggle('open');
+      // Footer: year + cookie settings link
+      document.getElementById('year').textContent = new Date().getFullYear();
+      const cookieLink = document.getElementById('open-cookie-settings');
+      if (cookieLink) cookieLink.addEventListener('click', (e) => { e.preventDefault(); if (typeof window.__openCookieModal === 'function') window.__openCookieModal(); });
+
+      // Cookies
+      const CK_KEY = "canfind.cookiePrefs";
+      const DEFAULT_PREFS = { necessary:true, analytics:false, performance:false, functional:false, advertising:false };
+
+      const $banner = document.getElementById("cookie-banner");
+      const $modal  = document.getElementById("cookie-modal");
+      const $ovl    = document.getElementById("ck-overlay");
+      const $acceptAll = document.getElementById("ck-accept");
+      const $acceptNec = document.getElementById("ck-necessary");
+      const $manage    = document.getElementById("ck-manage");
+      const $close     = document.getElementById("ck-close");
+      const $cancel    = document.getElementById("ck-cancel");
+      const $save      = document.getElementById("ck-save");
+
+      const loadPrefs = () => { try { return JSON.parse(localStorage.getItem(CK_KEY)) || null; } catch { return null; } };
+      const savePrefs = (p) => localStorage.setItem(CK_KEY, JSON.stringify(p));
+
+      function showBannerIfNeeded(){ if (!loadPrefs()) $banner.hidden = false; }
+      function openModal(){
+        const prefs = loadPrefs() || DEFAULT_PREFS;
+        document.querySelectorAll('.ck-switch input[data-key]').forEach(i => i.checked = !!prefs[i.dataset.key]);
+        $ovl.hidden = false; $modal.hidden = false;
+        $modal.querySelector('button, input')?.focus();
+      }
+      function closeModal(){ $ovl.hidden = true; $modal.hidden = true; }
+      window.__openCookieModal = openModal; // for footer link
+
+      // Hide banner on all actions:
+      $acceptAll.addEventListener('click', () => { savePrefs({ necessary:true, analytics:true, performance:true, functional:true, advertising:true }); $banner.hidden = true; });
+      $acceptNec.addEventListener('click', () => { savePrefs({ ...DEFAULT_PREFS }); $banner.hidden = true; });
+      $manage.addEventListener('click', openModal);
+      $close.addEventListener('click', closeModal);
+      $cancel.addEventListener('click', closeModal);
+      $ovl.addEventListener('click', closeModal);
+      document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && !$modal.hidden) closeModal(); });
+
+      $save.addEventListener('click', () => {
+        const prefs = { ...DEFAULT_PREFS };
+        document.querySelectorAll('.ck-switch input[data-key]').forEach(inp => prefs[inp.dataset.key] = inp.checked);
+        savePrefs(prefs);
+        closeModal();
+        $banner.hidden = true; // <-- ensure banner disappears after save
       });
 
-      // Optional: stub for province selection
-      function selectProvince(code){
-        console.log('Province selected:', code);
-        // TODO: re-center map / query places by province
-        closeMenu();
-      }
-      window.selectProvince = selectProvince;
-    </script>
-
-    <!-- Keep your existing app hooks -->
-    <script type="module" src="/src/main.jsx"></script>
-    <script src="/script.js"></script>
-
-    <!-- Google Maps -->
-    <script async
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA81uxRaknk0hRxBxflcXjLjsSoM6Mz1F4&libraries=places&callback=initMap">
+      showBannerIfNeeded();
     </script>
   </body>
 </html>

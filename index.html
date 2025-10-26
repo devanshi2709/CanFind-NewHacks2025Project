@@ -1,21 +1,10 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Explore Canada</title>
-        <link rel="stylesheet" href="style.css">
+<head>
+    <title>Food</title>
+    <link rel="stylesheet" href="style.css">
 
-    </head>
-    <body>
-        <h1>Explore Canada</h1>
-        <div id="map"></div>
-
-        <script src="script.js"></script>
-
-        <script async
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA81uxRaknk0hRxBxflcXjLjsSoM6Mz1F4&libraries=places&callback=initMap">
-        </script>
-
-        <style>
+    <style>
         #map {
             height: 75vh;
             width: 100%;
@@ -26,17 +15,28 @@
             font-size: 14px;
             border-radius: 8px;
         }
-        </style>
-        </head>
-        <body>
+    </style>
+</head>
+<body>
+    <h1>Spots for Food!</h1>
+
             <div>
 
-                <button onclick="showCheap()">Show Affordable Restaurants</button>
-                <button onclick="showCanadian()">Show All Canadian Restaurants</button>
+                <button onclick="showCheap()">Affordable</button>
+                <button onclick="showCanadian()">Canadian</button>
+                <button onclick="showChinese()">Chinese</button>
+                <button onclick="showItalian()">Italian</button>
+                <button onclick="showIndian()">Indian</button>
                 <div id="map"></div>
-            </div>
-        </body>
+    </div>
 
-        </script>
-    </body>
+    <div id="map"></div>
+
+    <script src="script.js"></script>
+
+    <script async
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA81uxRaknk0hRxBxflcXjLjsSoM6Mz1F4&libraries=places&callback=initMap">
+    
+    </script>
+</body>
 </html>

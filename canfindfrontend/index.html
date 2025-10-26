@@ -292,7 +292,7 @@
         <button id="close-sidebar" class="closebtn" aria-label="Close">×</button>
       </div>
       <div class="drawer-content">
-        <a href="#" class="cta-signin">👤 Profile / Sign In</a>
+        <a href="login.html" class="cta-signin">👤 Profile / Sign In</a>
 
         <div class="drawer-section">
           <div class="drawer-title">Regions</div>
@@ -518,7 +518,11 @@
       const loadPrefs=()=>{try{return JSON.parse(localStorage.getItem(CK_KEY))||null;}catch{return null;}};
       const savePrefs=p=>localStorage.setItem(CK_KEY,JSON.stringify(p));
 
-      function showBannerIfNeeded(){ if(!loadPrefs()){ $banner.hidden=false; $banner.style.display='grid'; } }
+      function showBannerIfNeeded(){
+        $banner.hidden=false;
+        $banner.style.display='grid';
+      }
+
       function hideCookieBanner(){ $banner.hidden=true; $banner.style.display='none'; }
       function openModal(){
         const prefs=loadPrefs()||DEFAULT_PREFS;

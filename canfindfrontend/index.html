@@ -1,76 +1,83 @@
-<!doctype html>
-<html lang="en">
-  <head>
+<!DOCTYPE html>
+<html>
+<head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Explore Canada - CanFind</title>
+
+    <!-- Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="App.css" />
 
     <style>
-      /* ---------- THEME (Canada + fall accent) ---------- */
+      /* ---------- THEME ---------- */
       :root{
-        --canada-red:#d32f2f;       /* primary brand red */
-        --canada-red-dark:#b71c1c;  /* darker hover */
-        --maple-gold:#f5a524;       /* warm fall accent */
-        --ink:#111317;              /* near-black */
+        --red:#d32f2f;         /* Canada red */
+        --red-dark:#b71c1c;
+        --gold:#f5a524;        /* fall accent */
+        --ink:#101215;
         --text:#1f2328;
-        --muted:#69707d;
-        --bg:#fffdfb;               /* warm white */
+        --muted:#667085;
+        --bg:#fffdfb;
         --surface:#ffffff;
         --overlay:rgba(0,0,0,.45);
+        --shadow:0 10px 24px rgba(0,0,0,.18);
       }
-
-      /* ---------- RESET ---------- */
       *{box-sizing:border-box}
-      html,body{height:100%}
       body{
-        margin:0;
-        font-family:"Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-        background:var(--bg);
-        color:var(--text);
-        line-height:1.4;
+        margin:0; font-family:"Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        background:var(--bg); color:var(--text);
       }
 
       /* ---------- NAVBAR ---------- */
       .navbar{
-        position:fixed; top:0; left:0; width:100%;
-        height:64px;
+        position:fixed; inset:0 0 auto 0; height:66px; z-index:1000;
         display:flex; align-items:center; justify-content:space-between;
-        padding:0 22px;
-        background:linear-gradient(180deg, var(--canada-red) 0%, var(--canada-red-dark) 100%);
-        color:#fff;
-        z-index:1000;
-        box-shadow:0 8px 22px rgba(0,0,0,.18);
-        animation:slideDown .5s ease both;
-        backdrop-filter:saturate(1.1);
+        padding:0 18px;
+        background:linear-gradient(180deg, var(--red) 0%, var(--red-dark) 100%);
+        color:#fff; box-shadow:var(--shadow);
       }
-      @keyframes slideDown{from{transform:translateY(-100%);opacity:0} to{transform:translateY(0);opacity:1}}
-
-      .brand{
-        display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:.2px;
-      }
-      .brand .leaf{
-        width:22px; height:22px; display:inline-block; transform:rotate(0deg);
-        background:conic-gradient(from 0deg at 50% 50%, #fff 0 25%, transparent 0 100%);
-        -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24"><path fill="white" d="M12 2l2.39 4.84L20 7.27l-4 3.9.94 5.48L12 14.77 7.06 16.65 8 11.17 4 7.27l5.61-.43z"/></svg>') center/contain no-repeat;
-                mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24"><path fill="white" d="M12 2l2.39 4.84L20 7.27l-4 3.9.94 5.48L12 14.77 7.06 16.65 8 11.17 4 7.27l5.61-.43z"/></svg>') center/contain no-repeat;
+      .brand{display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:.2px}
+      .leaf{
+        width:22px; height:22px; display:inline-block;
+        -webkit-mask:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="white" d="M12 2l2.39 4.84L20 7.27l-4 3.9.94 5.48L12 14.77 7.06 16.65 8 11.17 4 7.27l5.61-.43z"/></svg>') center/contain no-repeat;
+                mask:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="white" d="M12 2l2.39 4.84L20 7.27l-4 3.9.94 5.48L12 14.77 7.06 16.65 8 11.17 4 7.27l5.61-.43z"/></svg>') center/contain no-repeat;
+        background:#fff;
       }
 
-      .nav-left{display:flex; gap:26px; align-items:center; margin-left:10px}
-      .link{
-        color:#fff; text-decoration:none; font-weight:600; position:relative; padding:6px 2px;
+      .nav-left{display:flex; align-items:center; gap:18px}
+      .menu{position:relative}
+      .menu > button{
+        background:transparent; border:0; color:#fff; font-weight:700; cursor:pointer;
+        padding:8px 10px; border-radius:10px;
       }
-      .link::after{
-        content:""; position:absolute; left:0; bottom:-4px; height:2px; width:0%;
-        background:var(--maple-gold); border-radius:2px; transition:width .22s ease;
-      }
-      .link:hover::after{width:100%}
+      .menu > button:hover{background:rgba(255,255,255,.12)}
+      .menu[aria-expanded="true"] > button{background:rgba(255,255,255,.18)}
 
-      /* Hamburger button (always visible) */
+      /* Dropdown */
+      .dropdown{
+        position:absolute; top:100%; left:0; min-width:240px;
+        background:var(--surface); color:var(--ink); border-radius:12px; padding:8px;
+        box-shadow:var(--shadow); margin-top:8px; display:none;
+      }
+      .menu[aria-expanded="true"] .dropdown{display:block}
+      .dropdown h4{
+        margin:6px 8px 6px; font-size:.82rem; letter-spacing:.02em; color:var(--muted); text-transform:uppercase;
+      }
+      .dropdown a, .dropdown button.action{
+        display:flex; align-items:center; gap:10px; width:100%;
+        padding:10px 12px; border-radius:10px; border:0; background:transparent;
+        color:var(--ink); text-decoration:none; font-weight:600; cursor:pointer;
+      }
+      .dropdown a:hover, .dropdown button.action:hover{background:#f3f5f7}
+
+      /* Nested submenu (for Universities) */
+      .submenu{position:relative}
+      .submenu .dropdown{left:100%; top:0; margin-left:8px}
+
+      /* Hamburger button */
       .menu-btn{
         display:inline-flex; align-items:center; justify-content:center;
         width:44px; height:44px; border:0; border-radius:10px;
@@ -84,81 +91,63 @@
       .menu-icon::before{position:absolute; top:-7px}
       .menu-icon::after{position:absolute; top:7px}
 
-      /* Hide left links on small screens, keep hamburger */
-      @media (max-width: 820px){ .nav-left{display:none} }
+      @media (max-width: 980px){ .nav-left{display:none} }
 
-      /* ---------- DRAWER + OVERLAY ---------- */
-      .overlay{position:fixed; inset:0; background:var(--overlay);
-        opacity:0; visibility:hidden; transition:.25s; z-index:1090;}
+      /* ---------- DRAWER ---------- */
+      .overlay{position:fixed; inset:0; background:var(--overlay); opacity:0; visibility:hidden; transition:.25s; z-index:1090;}
       .overlay.show{opacity:1; visibility:visible}
-
       .sidebar{
-        position:fixed; top:0; right:0; height:100%; width:320px;
+        position:fixed; top:0; right:0; height:100%; width:340px;
         transform:translateX(100%); transition:transform .28s ease;
-        background:var(--surface); z-index:1100;
-        box-shadow:-8px 0 24px rgba(0,0,0,.2);
+        background:var(--surface); z-index:1100; box-shadow:-10px 0 24px rgba(0,0,0,.2);
         display:flex; flex-direction:column;
       }
       .sidebar.open{transform:translateX(0)}
       .drawer-head{
-        height:64px; padding:0 18px; display:flex; align-items:center; justify-content:space-between;
-        background:var(--canada-red); color:#fff; font-weight:700;
+        height:66px; padding:0 16px; display:flex; align-items:center; justify-content:space-between;
+        background:linear-gradient(180deg, var(--red) 0%, var(--red-dark) 100%); color:#fff; font-weight:800;
       }
-      .closebtn{
-        width:36px; height:36px; border:0; border-radius:8px; background:transparent; color:#fff; font-size:24px; cursor:pointer;
+      .closebtn{width:36px; height:36px; border:0; border-radius:8px; background:transparent; color:#fff; font-size:24px; cursor:pointer}
+      .drawer-content{padding:12px 12px 0 12px; overflow:auto}
+      .cta-signin{
+        display:block; width:100%; text-align:center; padding:12px 14px; margin:10px 0 6px;
+        background:var(--gold); color:#111; border-radius:12px; font-weight:800; text-decoration:none;
+        box-shadow:0 6px 18px rgba(245,165,36,.35);
       }
-      .drawer-links{padding:10px}
-      .drawer-links a{
-        display:flex; align-items:center; gap:10px;
-        padding:12px 12px; margin:4px 0; border-radius:10px; text-decoration:none;
-        color:var(--ink); font-weight:600;
-        background:#f7f7f8;
-      }
-      .drawer-links a:hover{background:#eceef2}
-      .kicker{padding:10px 14px; color:var(--muted); font-size:.9rem}
+      .drawer-section{margin:10px 0; border-radius:12px; background:#f7f8fa; padding:10px}
+      .drawer-title{font-size:.92rem; color:var(--muted); font-weight:700; text-transform:uppercase; margin:2px 6px 8px}
 
-      /* ---------- HERO ---------- */
+      .drawer-link, .drawer-button{
+        display:flex; align-items:center; justify-content:space-between; gap:10px;
+        width:100%; padding:10px 12px; border-radius:10px; border:0; background:#fff; cursor:pointer; text-align:left;
+        font-weight:600; color:var(--ink);
+      }
+      .drawer-link:hover, .drawer-button:hover{background:#eceef2}
+
+      .province-list{display:none; margin-top:8px}
+      .province-list.open{display:block}
+      .province-list button{display:block; width:100%; padding:8px 10px; margin:4px 0; border:0; border-radius:8px; background:#fff; cursor:pointer}
+      .province-list button:hover{background:#eceef2}
+
+      /* Sign out footer */
+      .drawer-footer{margin-top:auto; padding:10px 12px 16px}
+      .divider{border:0; border-top:1px solid #e4e6ea; margin:6px 0 12px}
+      .signout{
+        display:block; width:100%; padding:12px 14px; border:0; border-radius:10px;
+        background:var(--red-dark); color:#fff; font-weight:800; cursor:pointer;
+      }
+
+      /* ---------- MAIN ---------- */
+      main{margin-top:66px; padding:28px 18px 16px}
       .hero{
-        margin-top:64px; /* space for navbar */
-        padding:42px 20px 20px;
-        display:grid; grid-template-columns: 1.05fr 1.4fr; gap:28px;
-        max-width:1280px; margin-inline:auto;
-        align-items:center;
+        max-width:1280px; margin:0 auto; display:grid; grid-template-columns:1.05fr 1.4fr; gap:24px; align-items:center;
       }
-      @media (max-width: 960px){ .hero{grid-template-columns:1fr; padding-top:28px} }
+      @media (max-width: 960px){ .hero{grid-template-columns:1fr} }
+      h1{margin:0 0 8px; font-size:clamp(2rem, 4vw, 3rem); font-weight:800; color:var(--ink)}
+      p.lead{margin:0 0 16px; color:var(--muted)}
 
-      .title{
-        font-size: clamp(2.2rem, 4.5vw, 3.2rem);
-        font-weight:800; color:var(--ink); margin:0 0 10px;
-        animation:fadeUp .6s ease both .1s;
-      }
-      .subtitle{
-        color:var(--muted); margin:0 0 18px; font-size:1.05rem; max-width:36ch;
-        animation:fadeUp .6s ease both .18s;
-      }
-      @keyframes fadeUp{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:translateY(0)}}
-
-      .chips{display:flex; flex-wrap:wrap; gap:10px; margin:8px 0 18px; animation:fadeUp .6s ease both .22s;}
-      .chip{
-        background:var(--maple-gold); color:#111; border:none; border-radius:999px;
-        padding:8px 14px; font-weight:700; cursor:pointer;
-        box-shadow:0 2px 6px rgba(0,0,0,.14);
-        transition:transform .08s ease, filter .2s ease, background .15s ease;
-      }
-      .chip:hover{filter:brightness(1.05)}
-      .chip:active{transform:translateY(1px)}
-
-      /* ---------- MAP ---------- */
       #map{
-        height:70vh; width:100%; border-radius:16px;
-        background:#e7e7e7;
-        box-shadow:0 8px 28px rgba(0,0,0,.16);
-        animation:fadeUp .6s ease both .25s;
-      }
-
-      /* ---------- FOOT HELP ---------- */
-      .helper{
-        max-width:1280px; margin:18px auto; padding:0 20px; color:var(--muted); font-size:.95rem;
+        height:70vh; width:100%; border-radius:14px; background:#e7e7e7; box-shadow:var(--shadow);
       }
     </style>
   </head>
@@ -166,18 +155,81 @@
   <body>
     <!-- NAVBAR -->
     <nav class="navbar" role="navigation" aria-label="Main">
-      <div class="brand">
-        <span class="leaf" aria-hidden="true"></span>
-        <span>CanFind</span>
-      </div>
+      <div class="brand"><span class="leaf" aria-hidden="true"></span><span>CanFind</span></div>
 
+      <!-- TOP NAV with DROPDOWNS -->
       <div class="nav-left" aria-label="Primary">
-        <a class="link" href="#">Food</a>
-        <a class="link" href="#">Travel</a>
-        <a class="link" href="#">Community</a>
-        <a class="link" href="#">Connect</a>
+        <!-- FOOD -->
+        <div class="menu" aria-expanded="false">
+          <button type="button">Food ▾</button>
+          <div class="dropdown">
+            <h4>Cuisines</h4>
+            <button class="action" onclick="showCanadian()">Canadian</button>
+            <button class="action" onclick="showChinese()">Chinese</button>
+            <button class="action" onclick="showIndian()">Indian</button>
+            <button class="action" onclick="showItalian()">Italian</button>
+            <button class="action" onclick="showJapanese && showJapanese()">Japanese</button>
+            <button class="action" onclick="showKorean && showKorean()">Korean</button>
+            <button class="action" onclick="showVietnamese && showVietnamese()">Vietnamese</button>
+            <button class="action" onclick="showMiddleEastern && showMiddleEastern()">Middle Eastern</button>
+            <button class="action" onclick="showCaribbean && showCaribbean()">Caribbean</button>
+            <button class="action" onclick="showFilipino && showFilipino()">Filipino</button>
+            <button class="action" onclick="showAfrican && showAfrican()">African</button>
+            <button class="action" onclick="showLatinAmerican && showLatinAmerican()">Latin American</button>
+            <h4>Budget</h4>
+            <button class="action" onclick="showCheap()">Affordable</button>
+            <button class="action" onclick="showMid && showMid()">Mid-Range</button>
+            <button class="action" onclick="showSplurge && showSplurge()">Splurge</button>
+          </div>
+        </div>
+
+        <!-- TRAVEL -->
+        <div class="menu" aria-expanded="false">
+          <button type="button">Travel ▾</button>
+          <div class="dropdown">
+            <button class="action" onclick="showMuseums && showMuseums()">Museums & Galleries</button>
+            <button class="action" onclick="showFestivals && showFestivals()">Festivals & Events</button>
+            <button class="action" onclick="showParks && showParks()">Parks & Nature</button>
+            <button class="action" onclick="showLandmarks && showLandmarks()">Landmarks</button>
+            <button class="action" onclick="showTransit && showTransit()">Transit & Passes</button>
+          </div>
+        </div>
+
+        <!-- COMMUNITY (with Universities submenu) -->
+        <div class="menu" aria-expanded="false">
+          <button type="button">Community ▾</button>
+          <div class="dropdown">
+            <button class="action" onclick="showSettlement && showSettlement()">Settlement Centres</button>
+            <button class="action" onclick="showLanguageExchange && showLanguageExchange()">Language Exchange</button>
+            <button class="action" onclick="showVolunteer && showVolunteer()">Volunteer</button>
+
+            <div class="menu submenu" aria-expanded="false">
+              <button type="button" class="action">Universities ▸</button>
+              <div class="dropdown">
+                <h4>GTA</h4>
+                <button class="action" onclick="showUofT && showUofT()">University of Toronto</button>
+                <button class="action" onclick="showTMU && showTMU()">Toronto Metropolitan (TMU)</button>
+                <button class="action" onclick="showYork && showYork()">York University</button>
+                <button class="action" onclick="showOCAD && showOCAD()">OCAD University</button>
+                <button class="action" onclick="showUTM && showUTM()">U of T Mississauga</button>
+                <button class="action" onclick="showUTSC && showUTSC()">U of T Scarborough</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CONNECT -->
+        <div class="menu" aria-expanded="false">
+          <button type="button">Connect ▾</button>
+          <div class="dropdown">
+            <button class="action" onclick="showChat && showChat()">Pre-written Messages</button>
+            <button class="action" onclick="showGroups && showGroups()">WhatsApp / Discord</button>
+            <button class="action" onclick="showSupport && showSupport()">Support & Resources</button>
+          </div>
+        </div>
       </div>
 
+      <!-- HAMBURGER -->
       <button id="menu-button" class="menu-btn" aria-label="Open menu">
         <span class="menu-icon"></span>
       </button>
@@ -190,50 +242,96 @@
         <span>Menu</span>
         <button id="close-sidebar" class="closebtn" aria-label="Close">×</button>
       </div>
-      <div class="drawer-links">
-        <!-- Only items NOT in the top navbar -->
-        <a href="#">👤 Profile (Sign In / Sign Out)</a>
-        <a href="#">🌐 Change Language</a>
-        <a href="https://www.utoronto.ca/about-u-of-t/quick-facts" target="_blank">📘 About U of T</a>
-        <a href="#">🛠️ Settings</a>
-        <a href="#">♿ Accessibility</a>
-        <a href="#">📨 Help & Contact</a>
+
+      <div class="drawer-content">
+        <!-- Profile CTA -->
+        <a href="#" class="cta-signin">👤 Profile / Sign In</a>
+
+        <!-- Regions (Province) -->
+        <div class="drawer-section">
+          <div class="drawer-title">Regions</div>
+          <button id="province-toggle" class="drawer-button" type="button">
+            Choose Province <span>▾</span>
+          </button>
+          <div id="province-list" class="province-list">
+            <button onclick="selectProvince && selectProvince('ON')">Ontario</button>
+            <button onclick="selectProvince && selectProvince('QC')">Québec</button>
+            <button onclick="selectProvince && selectProvince('BC')">British Columbia</button>
+            <button onclick="selectProvince && selectProvince('AB')">Alberta</button>
+            <button onclick="selectProvince && selectProvince('MB')">Manitoba</button>
+            <button onclick="selectProvince && selectProvince('SK')">Saskatchewan</button>
+            <button onclick="selectProvince && selectProvince('NS')">Nova Scotia</button>
+            <button onclick="selectProvince && selectProvince('NB')">New Brunswick</button>
+            <button onclick="selectProvince && selectProvince('NL')">Newfoundland & Labrador</button>
+            <button onclick="selectProvince && selectProvince('PE')">Prince Edward Island</button>
+            <button onclick="selectProvince && selectProvince('NT')">Northwest Territories</button>
+            <button onclick="selectProvince && selectProvince('YT')">Yukon</button>
+            <button onclick="selectProvince && selectProvince('NU')">Nunavut</button>
+          </div>
+        </div>
+
+        <!-- Utilities -->
+        <div class="drawer-section">
+          <div class="drawer-title">Preferences</div>
+          <button class="drawer-link" type="button">🌐 Change Language</button>
+          <button class="drawer-link" type="button">♿ Accessibility</button>
+          <button class="drawer-link" type="button">🛠️ Settings</button>
+          <button class="drawer-link" type="button">📨 Help & Contact</button>
+        </div>
       </div>
-      <div class="kicker">Serving new immigrants & international students in the GTA.</div>
+
+      <div class="drawer-footer">
+        <hr class="divider" />
+        <button class="signout" type="button">Sign Out</button>
+      </div>
     </aside>
 
-    <!-- HERO + MAP -->
-    <section class="hero" aria-label="Explore Canada">
-      <header>
-        <h1 class="title">Explore Canada</h1>
-        <p class="subtitle">
-          Quick picks for food, festivals, and community support across the GTA —
-          built for newcomers and students.
-        </p>
-
-        <div class="chips">
-          <button class="chip" onclick="showCheap()">Affordable</button>
-          <button class="chip" onclick="showCanadian()">Canadian</button>
-          <button class="chip" onclick="showChinese()">Chinese</button>
-          <button class="chip" onclick="showItalian()">Italian</button>
-          <button class="chip" onclick="showIndian()">Indian</button>
-        </div>
-      </header>
-
-      <div id="map" role="region" aria-label="Map of nearby options"></div>
-    </section>
-
-    <p class="helper">Tip: click the categories above to drop pins on the map. Use the menu for profile, language, and help.</p>
+    <!-- MAIN -->
+    <main>
+      <section class="hero" aria-label="Explore Canada">
+        <header>
+          <h1>Explore Canada</h1>
+          <p class="lead">Find food, festivals, and community support across the GTA — built for newcomers and students.</p>
+        </header>
+        <div id="map" role="region" aria-label="Map of nearby options"></div>
+      </section>
+    </main>
 
     <!-- SCRIPTS -->
-    <script type="module" src="/src/main.jsx"></script>
-    <script src="/script.js"></script>
     <script>
+      // NAV dropdown logic (click to open/close; closes others)
+      function setupDropdowns(root){
+        const menus = [...root.querySelectorAll('.menu')];
+        menus.forEach(m=>{
+          const btn = m.querySelector(':scope > button');
+          btn.addEventListener('click', e=>{
+            e.stopPropagation();
+            const isOpen = m.getAttribute('aria-expanded') === 'true';
+            menus.forEach(x=>x.setAttribute('aria-expanded','false'));
+            m.setAttribute('aria-expanded', String(!isOpen));
+          });
+        });
+        document.addEventListener('click', ()=> menus.forEach(x=>x.setAttribute('aria-expanded','false')));
+      }
+      setupDropdowns(document);
+
+      // Handle nested submenu (Universities)
+      document.querySelectorAll('.submenu > button').forEach(b=>{
+        b.addEventListener('click', e=>{
+          e.stopPropagation();
+          const parent = b.closest('.submenu');
+          const open = parent.getAttribute('aria-expanded')==='true';
+          parent.setAttribute('aria-expanded', String(!open));
+        });
+      });
+
       // Drawer logic
       const sidebar = document.getElementById("sidebar");
       const menuButton = document.getElementById("menu-button");
       const closeSidebar = document.getElementById("close-sidebar");
       const overlay = document.getElementById("overlay");
+      const provinceToggle = document.getElementById('province-toggle');
+      const provinceList = document.getElementById('province-list');
 
       function openMenu(){
         sidebar.classList.add("open");
@@ -251,11 +349,29 @@
       closeSidebar.addEventListener("click", closeMenu);
       overlay.addEventListener("click", closeMenu);
       document.addEventListener("keydown", (e)=>{ if(e.key === "Escape") closeMenu(); });
+
+      // Province dropdown
+      provinceToggle.addEventListener('click', ()=>{
+        provinceList.classList.toggle('open');
+      });
+
+      // Optional: stub for province selection
+      function selectProvince(code){
+        console.log('Province selected:', code);
+        // TODO: re-center map / query places by province
+        closeMenu();
+      }
+      window.selectProvince = selectProvince;
     </script>
+
+    <!-- Keep your existing app hooks -->
+    <script type="module" src="/src/main.jsx"></script>
+    <script src="/script.js"></script>
 
     <!-- Google Maps -->
     <script async
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA81uxRaknk0hRxBxflcXjLjsSoM6Mz1F4&libraries=places&callback=initMap">
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA81uxRaknk0hRxBxflcXjLjsSoM6Mz1F4&libraries=places&callback=initMap">
+    
     </script>
   </body>
 </html>
